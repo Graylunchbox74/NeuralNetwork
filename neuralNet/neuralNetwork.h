@@ -10,7 +10,7 @@ public:
 	float learningRate;
 	float cost;
 
-	NeuralNetwork(int numberOfLayers, std::vector<int> numberOfNeuronsPerLayer, int learningRate);
+	NeuralNetwork(int numberOfLayers, std::vector<int> numberOfNeuronsPerLayer, float learningRate);
 
 	//load a network from a saved file
 	NeuralNetwork(std::string loadFile);
@@ -23,7 +23,7 @@ public:
 	void TrainNetworkSingleInstance(std::vector<float> input, std::vector<float>& expectedOutput);
 
 	//safekeeping
-	void SaveNetwork(std::string fileName);
+	void SaveNetwork(std::string fileName, float accuracy);
 
 private:
 	float FastSigmoidDerivative(float x);

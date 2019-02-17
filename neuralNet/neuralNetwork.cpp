@@ -1,6 +1,6 @@
 #include "neuralNetwork.h"
 
-NeuralNetwork::NeuralNetwork(int numberOfLayers, std::vector<int> numberOfNeuronsPerLayer, int learningRate){
+NeuralNetwork::NeuralNetwork(int numberOfLayers, std::vector<int> numberOfNeuronsPerLayer, float learningRate){
 	for (int i = 0; i < numberOfLayers; ++i)
 	{
 		if (i == 0)
@@ -193,4 +193,96 @@ std::vector<std::vector<float>> NeuralNetwork::BackPropagateBias(){
 		}
 	}
 	return changeBias;
+}
+
+NeuralNetwork::NeuralNetwork(std::string filename){
+	std::ifstream inputFile(filename);
+
+	float accuracy;
+	inputFile >> accuracy;
+
+	int numberOfLayers;
+	inputFile >> numberOfLayers;
+	std::vector<int> numberOfNeuronsPerLayer;
+
+	inputFile >> this->learningRate;
+
+	int tmp;
+	for(int i = 0; i < numberOfLayers; i++)
+	{
+		inputFile >> tmp;
+		numberOfNeuronsPerLayer.push_back(tmp);
+	}
+	
+	for (int i = 0; i < numberOfLayers; ++i)
+	{
+		if (i == 0)
+		{
+			this->layers.push_back(Layer(numberOfNeuronsPerLayer[i]));
+		}
+		else
+		{
+			this->layers.push_back(Layer(numberOfNeuronsPerLayer[i], numberOfNeuronsPerLayer[i-1]));
+		}
+	}
+
+	//bias
+	float tmpBias;
+	for(int i = 1; i < this->layers.size(); i++)
+	{
+		for(int x = 0; x < this->layers[i].neurons.size(); x++)
+		{
+			inputFile >> tmpBias;
+			this->layers[i].neurons[x].bias = tmpBias;
+		}		
+	}
+
+	//weight
+	float tmpWeight;
+	for(int i = 1; i < this->layers.size(); i++)
+	{
+		for(int x = 0; x < this->layers[i].neurons.size(); x++)
+		{
+			for(int y = 0; y < this->layers[i].neurons[x].weights.size(); y++)
+			{
+				inputFile >> tmpWeight;
+				this->layers[i].neurons[x].weights[y] = tmpWeight;
+			}
+		}		
+	}
+
+	inputFile.close();
+}
+
+void NeuralNetwork::SaveNetwork(std::string fileName, float accuracy){
+	std::ofstream outputFile(fileName);
+	outputFile << accuracy << "\n";
+	outputFile << this->layers.size() << "\n";
+	outputFile << this-> learningRate << "\n";
+	for(int i = 0; i < this->layers.size(); i++)
+	{
+		outputFile << this->layers[i].neurons.size() << " ";
+	}
+	outputFile << "\n";
+	for(int i = 1; i < this->layers.size(); i++)
+	{
+		for(int x = 0; x < this->layers[i].neurons.size(); x++)
+		{
+			outputFile << this->layers[i].neurons[x].bias << " ";
+		}
+		outputFile << "\n";
+	}
+	outputFile << "\n";
+	for(int i = 1; i < this->layers.size(); i++)
+	{
+		for(int x = 0; x < this->layers[i].neurons.size(); x++)
+		{
+			for(int y = 0; y < this->layers[i].neurons[x].weights.size(); y++)
+			{
+				outputFile << this->layers[i].neurons[x].weights[y] << " ";
+			}
+			outputFile << "\n";			
+		}
+	}
+	outputFile.close();
 }
