@@ -5,17 +5,11 @@
 #include <thread>
 #include <unistd.h>
 
-#define NUM_THREADS 4
-#define MIN_LAYERS 3
-#define MAX_LAYERS 10
-#define MIN_NEURONS 10
-#define MAX_NEURONS 200
-#define MIN_LEARNING_RATE 1
-#define MAX_LEARNING_RATE 10
-#define TRAINING_ITERATIONS 5000
+#define NUM_TRAINING_THREADS 4
 
-std::vector<float> accuracies(NUM_THREADS);
-std::vector<bool> isFinished(NUM_THREADS);
+
+std::vector<float> accuracies(NUM_TRAINING_THREADS);
+std::vector<bool> isFinished(NUM_TRAINING_THREADS);
 int inc = 0;
 
 
@@ -145,20 +139,20 @@ int main(){
 	//init
 	std::vector<NeuralNetwork> networks;
 	srand(time(NULL));
-	for(int i = 0; i < NUM_THREADS; i++){
+	for(int i = 0; i < NUM_TRAINING_THREADS; i++){
 		isFinished[i] = false;
 		networks.push_back(makeRandomNeuralNetwork());
 		accuracies[i] = 0;
 	}
 
 	std::vector<std::thread> threads;
-	std::vector<float> accuracies(NUM_THREADS);
-	for(int i = 0; i < NUM_THREADS; i++){
+	std::vector<float> accuracies(NUM_TRAINING_THREADS);
+	for(int i = 0; i < NUM_TRAINING_THREADS; i++){
 		threads.push_back(std::thread(trainRandomNeuralNetwork,std::ref(networks[i]), i));
 	}
 
 	while(1){
-		for(int i = 0; i < NUM_THREADS; i++){
+		for(int i = 0; i < NUM_TRAINING_THREADS; i++){
 			if(isFinished[i])
 			{
 				threads[i].join();
