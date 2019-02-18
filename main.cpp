@@ -5,7 +5,7 @@
 #include <thread>
 #include <unistd.h>
 
-#define NUM_TRAINING_THREADS 4
+#define NUM_TRAINING_THREADS 2
 
 
 std::vector<float> accuracies(NUM_TRAINING_THREADS);
@@ -157,6 +157,7 @@ int main(){
 			{
 				threads[i].join();
 				testAndSave(networks[i],accuracies[i]);
+				accuracies[i] = 0;
 				networks[i] = makeRandomNeuralNetwork();
 				threads[i] = std::thread(trainRandomNeuralNetwork,std::ref(networks[i]), i);
 				isFinished[i] = false;
