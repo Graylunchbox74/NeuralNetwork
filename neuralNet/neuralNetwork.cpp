@@ -197,6 +197,10 @@ std::vector<std::vector<float>> NeuralNetwork::BackPropagateBias(){
 
 NeuralNetwork::NeuralNetwork(std::string filename){
 	std::ifstream inputFile(filename);
+	if(!inputFile.good()){
+		std::cout << "File does not exist to load network from" << std::endl;
+		return;
+	}
 
 	float accuracy;
 	inputFile >> accuracy;

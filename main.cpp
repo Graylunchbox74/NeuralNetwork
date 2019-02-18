@@ -10,7 +10,7 @@
 
 float accuracies[NUM_TRAINING_THREADS];
 std::vector<bool> isFinished(NUM_TRAINING_THREADS);
-int inc = 0;
+int inc = 2;
 
 
 inline std::vector<float> getNextImage(std::ifstream& imageFile){
@@ -170,5 +170,8 @@ int main(){
 
 		usleep(1000000);
 	}
+
+	//lets fine tune this network
+
 	return 0;
 }
