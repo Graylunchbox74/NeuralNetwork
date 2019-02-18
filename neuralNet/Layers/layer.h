@@ -2,7 +2,7 @@
 #include <thread>
 #include "Neurons/neuron.h"
 
-#define NUM_THREADS 4
+#define NUM_THREADS 1
 
 class Layer{
 public:

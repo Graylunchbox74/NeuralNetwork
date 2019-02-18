@@ -5,10 +5,10 @@
 #include <thread>
 #include <unistd.h>
 
-#define NUM_TRAINING_THREADS 2
+#define NUM_TRAINING_THREADS 4
 
 
-std::vector<float> accuracies(NUM_TRAINING_THREADS);
+float accuracies[NUM_TRAINING_THREADS];
 std::vector<bool> isFinished(NUM_TRAINING_THREADS);
 int inc = 0;
 
@@ -30,6 +30,22 @@ inline int getNextLabel(std::ifstream& labelFile){
 	int c;
 	labelFile >> c;
 	return int(c);
+}
+
+void testAndSave(NeuralNetwork& n, float accuracy){
+	std::cout << "Accuracy3: " << accuracy/100 <<std::endl;
+	inc++;
+	n.SaveNetwork("./SavedNetworks/saved" + std::to_string(inc), accuracy);
+	return;
+	
+	// std::string directory = "./SavedNetworks/saved";
+	// float oldAccuracy;
+	// std::ifstream inputFile(directory + std::to_string(inc));
+	// inputFile >> oldAccuracy;
+	// if(accuracy > oldAccuracy){
+	// 	inc++;
+	// 	n.SaveNetwork("./SavedNetworks/saved" + std::to_string(inc), accuracy);
+	// }
 }
 
 
@@ -95,9 +111,9 @@ float trainRandomNeuralNetwork(NeuralNetwork& n, int my_id){
 		answer == label ? accuracy++ : accuracy+=0;
 		//usleep(100000);
 	}
-	std::cout << "Accuracy: " << accuracy/100 <<std::endl;
 	accuracies[my_id] = accuracy;
 	isFinished[my_id] = true;
+	testAndSave(n, accuracy);
 	return accuracy;
 }
 
@@ -123,17 +139,6 @@ NeuralNetwork makeRandomNeuralNetwork(){
 	return n;
 }
 
-void testAndSave(NeuralNetwork& n, float accuracy){
-	std::string directory = "./SavedNetworks/saved/";
-	float oldAccuracy;
-	std::ifstream inputFile(directory + std::to_string(inc));
-	inputFile >> oldAccuracy;
-	if(accuracy > oldAccuracy){
-		inc++;
-		n.SaveNetwork("./SavedNetworks/saved" + std::to_string(inc), accuracy);
-	}
-}
-
 int main(){
 
 	//init
@@ -156,7 +161,6 @@ int main(){
 			if(isFinished[i])
 			{
 				threads[i].join();
-				testAndSave(networks[i],accuracies[i]);
 				accuracies[i] = 0;
 				networks[i] = makeRandomNeuralNetwork();
 				threads[i] = std::thread(trainRandomNeuralNetwork,std::ref(networks[i]), i);
@@ -164,7 +168,7 @@ int main(){
 			}
 		}
 
-		usleep(10000);
+		usleep(1000000);
 	}
 	return 0;
 }
