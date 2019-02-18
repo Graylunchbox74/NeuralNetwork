@@ -5,7 +5,7 @@
 #include <thread>
 #include <unistd.h>
 
-#define NUM_TRAINING_THREADS 4
+#define NUM_TRAINING_THREADS 3
 
 
 float accuracies[NUM_TRAINING_THREADS];

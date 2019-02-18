@@ -2,7 +2,7 @@
 #include <string>
 #include <cstdio>
 
-#define NUMBER_OF_FILES 226
+#define NUMBER_OF_FILES 904
 
 int main(){
     float highestAcc = 0;
